@@ -6,24 +6,103 @@ import Link from "next/link";
 import { Checkbox } from "./_components/ui/checkbox";
 import { useEffect, useState } from "react";
 import { Button } from "./_components/ui/button";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Trash2 } from "lucide-react";
 import LogoCN from "./_assets/logo.png";
+import { Dialog, DialogDescription, DialogHeader, DialogContent, DialogFooter, DialogTitle } from "./_components/ui/dialog";
 
 export default function Home() {
   const [checkedTasks, setCheckedTasks] = useState<{ [key: string]: boolean }>({});
+  const [resetKey, setResetKey] = useState(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [sectionToClean, setSectionToClean] = useState<'p1-' | 'stage-' | null>(null);
+
+  const handleClearChecklist = (prefix: 'p1-' | 'stage-') => {
+    setSectionToClean(prefix);
+    setDialogOpen(true);
+  };
+
+  const confirmClear = () => {
+    if (!sectionToClean) return;
+
+    const newCheckedTasks = Object.entries(checkedTasks).reduce((acc, [key, value]) => {
+      if (!key.startsWith(sectionToClean)) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {} as { [key: string]: boolean });
+
+    setCheckedTasks(newCheckedTasks);
+    
+    const dataToSave = {
+      tasks: newCheckedTasks,
+      date: new Date().toISOString()
+    };
+    
+    localStorage.setItem('checkedTasks', JSON.stringify(dataToSave));
+    setResetKey(prev => prev + 1);
+    setDialogOpen(false);
+  };
 
   useEffect(() => {
     const savedTasks = localStorage.getItem('checkedTasks');
     if (savedTasks) {
-      setCheckedTasks(JSON.parse(savedTasks));
+      try {
+        const {tasks, date} = JSON.parse(savedTasks);
+        const savedDate = new Date(date);
+        const currentDate = new Date();
+        
+        const isSameDay = savedDate.getDate() === currentDate.getDate() &&
+          savedDate.getMonth() === currentDate.getMonth() &&
+          savedDate.getFullYear() === currentDate.getFullYear();
+        
+        if (isSameDay) {
+          setCheckedTasks(tasks);
+        } else {
+          localStorage.removeItem('checkedTasks');
+          setCheckedTasks({});
+          setResetKey(prev => prev + 1);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar tarefas:', error);
+        localStorage.removeItem('checkedTasks');
+        setCheckedTasks({});
+        setResetKey(prev => prev + 1);
+      }
     }
   }, []);
 
   const handleCheckChange = (taskId: string, checked: boolean) => {
     const newCheckedTasks = { ...checkedTasks, [taskId]: checked };
     setCheckedTasks(newCheckedTasks);
-    localStorage.setItem('checkedTasks', JSON.stringify(newCheckedTasks));
+    
+    const dataToSave = {
+      tasks: newCheckedTasks,
+      date: new Date().toISOString()
+    };
+    
+    localStorage.setItem('checkedTasks', JSON.stringify(dataToSave));
   };
+
+  // const handleClearChecklist = (prefix: 'p1-' | 'stage-') => {
+  //   if (window.confirm('Tem certeza que deseja limpar todas as tarefas desta seção?')) {
+  //     const newCheckedTasks = Object.entries(checkedTasks).reduce((acc, [key, value]) => {
+  //       if (!key.startsWith(prefix)) {
+  //         acc[key] = value;
+  //       }
+  //       return acc;
+  //     }, {} as { [key: string]: boolean });
+  
+  //     setCheckedTasks(newCheckedTasks);
+      
+  //     const dataToSave = {
+  //       tasks: newCheckedTasks,
+  //       date: new Date().toISOString()
+  //     };
+      
+  //     localStorage.setItem('checkedTasks', JSON.stringify(dataToSave));
+  //     setResetKey(prev => prev + 1);
+  //   }
+  // };
   
   return (
     <div className="overflow-hidden grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -46,17 +125,25 @@ export default function Home() {
           </AccordionItem>
           <AccordionItem value="item-2">
             <AccordionTrigger>Tarefas P1</AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent key={`p1-${resetKey}`}>
               <div className="mt-2 flex flex-col text-sm text-start gap-[22px] font-[family-name:var(--font-geist-mono)]">
+                <Button 
+                  variant="outline" 
+                  className="w-full text-red-500 hover:text-red-600 hover:bg-red-50 gap-2"
+                  onClick={() => handleClearChecklist('p1-')}
+                >
+                  <Trash2 size={16} />
+                  Limpar checklist
+                </Button>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-1"
-                    checked={checkedTasks['task-1']}
-                    onCheckedChange={(checked) => handleCheckChange('task-1', checked as boolean)}
+                    id="p1-task-1"
+                    checked={checkedTasks['p1-task-1']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-1', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-1"
+                    htmlFor="p1-task-1"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Quando culto das 08h, organizar mesa do café (montagem da mesa)
@@ -64,13 +151,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-2"
-                    checked={checkedTasks['task-2']}
-                    onCheckedChange={(checked) => handleCheckChange('task-2', checked as boolean)}
+                    id="p1-task-2"
+                    checked={checkedTasks['p1-task-2']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-2', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-2"
+                    htmlFor="p1-task-2"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Preparar jarra de água com copos
@@ -78,13 +165,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-3"
-                    checked={checkedTasks['task-3']}
-                    onCheckedChange={(checked) => handleCheckChange('task-3', checked as boolean)}
+                    id="p1-task-3"
+                    checked={checkedTasks['p1-task-3']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-3', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-3"
+                    htmlFor="p1-task-3"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Quando culto das 10h e 17h, perguntar para o líder da banda a quantidade de pessoas para ajuda de custo e depois passar para o líder da diaconia
@@ -92,13 +179,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-4"
-                    checked={checkedTasks['task-4']}
-                    onCheckedChange={(checked) => handleCheckChange('task-4', checked as boolean)}
+                    id="p1-task-4"
+                    checked={checkedTasks['p1-task-4']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-4', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-4"
+                    htmlFor="p1-task-4"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Quando 2º e 4º domingo do mês, pegar castanha e mel
@@ -106,13 +193,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-5"
-                    checked={checkedTasks['task-5']}
-                    onCheckedChange={(checked) => handleCheckChange('task-5', checked as boolean)}
+                    id="p1-task-5"
+                    checked={checkedTasks['p1-task-5']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-5', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-5"
+                    htmlFor="p1-task-5"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Descobrir quem irá dar a palavra de oferta
@@ -120,13 +207,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-6"
-                    checked={checkedTasks['task-6']}
-                    onCheckedChange={(checked) => handleCheckChange('task-6', checked as boolean)}
+                    id="p1-task-6"
+                    checked={checkedTasks['p1-task-6']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-6', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-6"
+                    htmlFor="p1-task-6"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Pegar o versículo bíblico com quem irá fazer a palavra de oferta
@@ -134,13 +221,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-7"
-                    checked={checkedTasks['task-7']}
-                    onCheckedChange={(checked) => handleCheckChange('task-7', checked as boolean)}
+                    id="p1-task-7"
+                    checked={checkedTasks['p1-task-7']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-7', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-7"
+                    htmlFor="p1-task-7"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Preencher formulário de culto e enviar no grupo do whatsapp
@@ -148,13 +235,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-8"
-                    checked={checkedTasks['task-8']}
-                    onCheckedChange={(checked) => handleCheckChange('task-8', checked as boolean)}
+                    id="p1-task-8"
+                    checked={checkedTasks['p1-task-8']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-8', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-8"
+                    htmlFor="p1-task-8"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Pegar a santa ceia para produção, pregador e banda (todo culto das 15hs tem santa ceia)
@@ -162,13 +249,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-9"
-                    checked={checkedTasks['task-9']}
-                    onCheckedChange={(checked) => handleCheckChange('task-9', checked as boolean)}
+                    id="p1-task-9"
+                    checked={checkedTasks['p1-task-9']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-9', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-9"
+                    htmlFor="p1-task-9"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Já deixar a ceia do pregador um pouco aberta para facilitar a abertura
@@ -176,13 +263,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-10"
-                    checked={checkedTasks['task-10']}
-                    onCheckedChange={(checked) => handleCheckChange('task-10', checked as boolean)}
+                    id="p1-task-10"
+                    checked={checkedTasks['p1-task-10']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-10', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-10"
+                    htmlFor="p1-task-10"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Se houver apresentação de crianças, reservar as cadeiras e recepcionar os pais
@@ -190,13 +277,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-11"
-                    checked={checkedTasks['task-11']}
-                    onCheckedChange={(checked) => handleCheckChange('task-11', checked as boolean)}
+                    id="p1-task-11"
+                    checked={checkedTasks['p1-task-11']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-11', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-11"
+                    htmlFor="p1-task-11"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Quando culto das 08h, remover mesa do café da manhã
@@ -207,17 +294,25 @@ export default function Home() {
           </AccordionItem>
           <AccordionItem value="item-3">
             <AccordionTrigger>Tarefas Stage</AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent key={`stage-${resetKey}`}>
               <div className="mt-2 flex flex-col text-sm text-start gap-[22px] font-[family-name:var(--font-geist-mono)]">
+                <Button 
+                  variant="outline" 
+                  className="w-full text-red-500 hover:text-red-600 hover:bg-red-50 gap-2"
+                  onClick={() => handleClearChecklist('stage-')}
+                >
+                  <Trash2 size={16} />
+                  Limpar checklist
+                </Button>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-1"
-                    checked={checkedTasks['task-1']}
-                    onCheckedChange={(checked) => handleCheckChange('task-1', checked as boolean)}
+                    id="stage-task-1"
+                    checked={checkedTasks['stage-task-1']}
+                    onCheckedChange={(checked) => handleCheckChange('stage-task-1', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-1"
+                    htmlFor="stage-task-1"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Alinhar com P1 sobre checagem de detalhes e informações do culto
@@ -225,13 +320,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-2"
-                    checked={checkedTasks['task-2']}
-                    onCheckedChange={(checked) => handleCheckChange('task-2', checked as boolean)}
+                    id="stage-task-2"
+                    checked={checkedTasks['stage-task-2']}
+                    onCheckedChange={(checked) => handleCheckChange('stage-task-2', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-2"
+                    htmlFor="stage-task-2"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Vistoriar backstage e palco
@@ -239,13 +334,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-3"
-                    checked={checkedTasks['task-3']}
-                    onCheckedChange={(checked) => handleCheckChange('task-3', checked as boolean)}
+                    id="stage-task-3"
+                    checked={checkedTasks['stage-task-3']}
+                    onCheckedChange={(checked) => handleCheckChange('stage-task-3', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-3"
+                    htmlFor="stage-task-3"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Ligar ar condicionado do backstage
@@ -253,13 +348,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-4"
-                    checked={checkedTasks['task-4']}
-                    onCheckedChange={(checked) => handleCheckChange('task-4', checked as boolean)}
+                    id="stage-task-4"
+                    checked={checkedTasks['stage-task-4']}
+                    onCheckedChange={(checked) => handleCheckChange('stage-task-4', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-4"
+                    htmlFor="stage-task-4"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Checar elementos técnicos (microfones, pilhas, etc...)
@@ -267,13 +362,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-5"
-                    checked={checkedTasks['task-5']}
-                    onCheckedChange={(checked) => handleCheckChange('task-5', checked as boolean)}
+                    id="stage-task-5"
+                    checked={checkedTasks['stage-task-5']}
+                    onCheckedChange={(checked) => handleCheckChange('stage-task-5', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-5"
+                    htmlFor="stage-task-5"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Pegar o fone/rádio
@@ -281,13 +376,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-6"
-                    checked={checkedTasks['task-6']}
-                    onCheckedChange={(checked) => handleCheckChange('task-6', checked as boolean)}
+                    id="stage-task-6"
+                    checked={checkedTasks['stage-task-6']}
+                    onCheckedChange={(checked) => handleCheckChange('stage-task-6', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-6"
+                    htmlFor="stage-task-6"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Se apresentar a equipe do louvor e perguntar se precisa de alguma ajuda
@@ -295,13 +390,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-7"
-                    checked={checkedTasks['task-7']}
-                    onCheckedChange={(checked) => handleCheckChange('task-7', checked as boolean)}
+                    id="stage-task-7"
+                    checked={checkedTasks['stage-task-7']}
+                    onCheckedChange={(checked) => handleCheckChange('stage-task-7', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-7"
+                    htmlFor="stage-task-7"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Se apresentar a House e se colocar à disposição para contribuir com eles. 
@@ -309,13 +404,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-8"
-                    checked={checkedTasks['task-8']}
-                    onCheckedChange={(checked) => handleCheckChange('task-8', checked as boolean)}
+                    id="stage-task-8"
+                    checked={checkedTasks['stage-task-8']}
+                    onCheckedChange={(checked) => handleCheckChange('stage-task-8', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-8"
+                    htmlFor="stage-task-8"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Se apresentar a mídia, verificar e bater com a mídia elementos gráficos, vídeos,  versículos e 
@@ -324,13 +419,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-9"
-                    checked={checkedTasks['task-9']}
-                    onCheckedChange={(checked) => handleCheckChange('task-9', checked as boolean)}
+                    id="stage-task-9"
+                    checked={checkedTasks['stage-task-9']}
+                    onCheckedChange={(checked) => handleCheckChange('stage-task-9', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-9"
+                    htmlFor="stage-task-9"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Limpar as mesinhas e deixar no ponto de uso.
@@ -338,13 +433,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-start space-x-2">
                   <Checkbox
-                    id="task-10"
-                    checked={checkedTasks['task-10']}
-                    onCheckedChange={(checked) => handleCheckChange('task-10', checked as boolean)}
+                    id="stage-task-10"
+                    checked={checkedTasks['stage-task-10']}
+                    onCheckedChange={(checked) => handleCheckChange('stage-task-10', checked as boolean)}
                     className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                   />
                   <label
-                    htmlFor="task-10"
+                    htmlFor="stage-task-10"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Posicionar o pastor/orador/ para este momento e comunicar a house quem vai entrar e com qual microfone quando estiver faltando 2 minutos para entrar.     
@@ -352,13 +447,13 @@ export default function Home() {
                 </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-11"
-                      checked={checkedTasks['task-11']}
-                      onCheckedChange={(checked) => handleCheckChange('task-11', checked as boolean)}
+                      id="stage-task-11"
+                      checked={checkedTasks['stage-task-11']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-11', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-11"
+                      htmlFor="stage-task-11"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Entrar com as mesas e água no 3 vídeo do CN news (conferir último vídeo)
@@ -366,13 +461,13 @@ export default function Home() {
                   </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-12"
-                      checked={checkedTasks['task-12']}
-                      onCheckedChange={(checked) => handleCheckChange('task-12', checked as boolean)}
+                      id="stage-task-12"
+                      checked={checkedTasks['stage-task-12']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-12', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-12"
+                      htmlFor="stage-task-12"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Conferir instrumentos ou tripes estão na frente do telão e retirar
@@ -380,13 +475,13 @@ export default function Home() {
                   </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-13"
-                      checked={checkedTasks['task-13']}
-                      onCheckedChange={(checked) => handleCheckChange('task-13', checked as boolean)}
+                      id="stage-task-13"
+                      checked={checkedTasks['stage-task-13']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-13', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-13"
+                      htmlFor="stage-task-13"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Receber e preparar pastor/ para próximo momento e entregar
@@ -394,13 +489,13 @@ export default function Home() {
                   </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-14"
-                      checked={checkedTasks['task-14']}
-                      onCheckedChange={(checked) => handleCheckChange('task-14', checked as boolean)}
+                      id="stage-task-14"
+                      checked={checkedTasks['stage-task-14']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-14', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-14"
+                      htmlFor="stage-task-14"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Faltando 8 min para o final da palavra - Localizar o tecladista e fazê-lo subir ao backstage;
@@ -408,13 +503,13 @@ export default function Home() {
                   </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-15"
-                      checked={checkedTasks['task-15']}
-                      onCheckedChange={(checked) => handleCheckChange('task-15', checked as boolean)}
+                      id="stage-task-15"
+                      checked={checkedTasks['stage-task-15']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-15', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-15"
+                      htmlFor="stage-task-15"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Faltando 5 min para o final da palavra - Autorização para entrada do tecladista e início da  
@@ -423,13 +518,13 @@ export default function Home() {
                   </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-16"
-                      checked={checkedTasks['task-16']}
-                      onCheckedChange={(checked) => handleCheckChange('task-16', checked as boolean)}
+                      id="stage-task-16"
+                      checked={checkedTasks['stage-task-16']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-16', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-16"
+                      htmlFor="stage-task-16"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Faltando 3 min para o final da palavra - deixar banda posicionada para entrada de todos
@@ -437,13 +532,13 @@ export default function Home() {
                   </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-17"
-                      checked={checkedTasks['task-17']}
-                      onCheckedChange={(checked) => handleCheckChange('task-17', checked as boolean)}
+                      id="stage-task-17"
+                      checked={checkedTasks['stage-task-17']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-17', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-17"
+                      htmlFor="stage-task-17"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Avisar P1 e a house para a entrada da banda.
@@ -451,13 +546,13 @@ export default function Home() {
                   </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-18"
-                      checked={checkedTasks['task-18']}
-                      onCheckedChange={(checked) => handleCheckChange('task-18', checked as boolean)}
+                      id="stage-task-18"
+                      checked={checkedTasks['stage-task-18']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-18', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-18"
+                      htmlFor="stage-task-18"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Garantir que todos os microfones estejam desligados e guardados;
@@ -465,13 +560,13 @@ export default function Home() {
                   </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-19"
-                      checked={checkedTasks['task-19']}
-                      onCheckedChange={(checked) => handleCheckChange('task-19', checked as boolean)}
+                      id="stage-task-19"
+                      checked={checkedTasks['stage-task-19']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-19', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-19"
+                      htmlFor="stage-task-19"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Retirar as mesas
@@ -479,13 +574,13 @@ export default function Home() {
                   </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-20"
-                      checked={checkedTasks['task-20']}
-                      onCheckedChange={(checked) => handleCheckChange('task-20', checked as boolean)}
+                      id="stage-task-20"
+                      checked={checkedTasks['stage-task-20']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-20', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-20"
+                      htmlFor="stage-task-20"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Conferir pilhas e baterias e informar a equipe do próximo culto.
@@ -493,13 +588,13 @@ export default function Home() {
                   </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-21"
-                      checked={checkedTasks['task-21']}
-                      onCheckedChange={(checked) => handleCheckChange('task-21', checked as boolean)}
+                      id="stage-task-21"
+                      checked={checkedTasks['stage-task-21']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-21', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-21"
+                      htmlFor="stage-task-21"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Garantir que a produção  permaneça por pelo menos 10 minutos após o  fim do culto, controlando e observando o fluxo de saída e a chegada da próxima equipe. 
@@ -507,13 +602,13 @@ export default function Home() {
                   </div>
                   <div className="flex items-start space-x-2">
                     <Checkbox
-                      id="task-22"
-                      checked={checkedTasks['task-22']}
-                      onCheckedChange={(checked) => handleCheckChange('task-22', checked as boolean)}
+                      id="stage-task-22"
+                      checked={checkedTasks['stage-task-22']}
+                      onCheckedChange={(checked) => handleCheckChange('stage-task-22', checked as boolean)}
                       className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
                     />
                     <label
-                      htmlFor="task-22"
+                      htmlFor="stage-task-22"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Devolver ou entregar em mãos a próxima equipe o Rádio/Phone desligado.
@@ -523,6 +618,25 @@ export default function Home() {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Limpar checklist</DialogTitle>
+              <DialogDescription>
+                Tem certeza que deseja limpar todas as tarefas desta seção? Esta ação não pode ser desfeita.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button variant="destructive" onClick={confirmClear}>
+                Limpar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
         {/* <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2">
             Get started by editing{" "}
