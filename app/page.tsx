@@ -47,7 +47,7 @@ export default function Home() {
           <AccordionItem value="item-2">
             <AccordionTrigger>Tarefas P1</AccordionTrigger>
             <AccordionContent>
-              <div className="flex flex-col gap-2 text-sm text-start font-[family-name:var(--font-geist-mono)]">
+              <div className="mt-2 flex flex-col text-sm text-start gap-[22px] font-[family-name:var(--font-geist-mono)]">
                 <div className="flex items-start space-x-2">
                   <Checkbox
                     id="task-1"
@@ -87,7 +87,7 @@ export default function Home() {
                     htmlFor="task-3"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Quando culto das 10h e 17h, ajuda de custo do louvor (perguntar para o líder da banda a quantidade de louvores e depois passar para o líder da diaconia)
+                    Quando culto das 10h e 17h, perguntar para o líder da banda a quantidade de pessoas para ajuda de custo e depois passar para o líder da diaconia
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -208,7 +208,7 @@ export default function Home() {
           <AccordionItem value="item-3">
             <AccordionTrigger>Tarefas Stage</AccordionTrigger>
             <AccordionContent>
-              <div className="flex flex-col gap-2 text-sm text-start font-[family-name:var(--font-geist-mono)]">
+              <div className="mt-2 flex flex-col text-sm text-start gap-[22px] font-[family-name:var(--font-geist-mono)]">
                 <div className="flex items-start space-x-2">
                   <Checkbox
                     id="task-1"
