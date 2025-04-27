@@ -140,7 +140,7 @@ export default function Home() {
         />
         <Accordion className="w-[84vw] max-w-[400px] sm:w-[400px]" type="single" collapsible>
           <AccordionItem value="item-1">
-            <AccordionTrigger>Escala Março-Abril</AccordionTrigger>
+            <AccordionTrigger>Escala Atualizada</AccordionTrigger>
             <AccordionContent>
               <Link href="https://drive.google.com/drive/folders/1UbyfzMrW4EKw9Qd-KZb2ZEIT0n6Fe67j" target="_blank" className="underline">
                 Ver escala
@@ -212,7 +212,7 @@ export default function Home() {
                     htmlFor="p1-task-4"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Quando 2º e 4º domingo do mês, pegar castanha e mel
+                    Quando 2º domingo do mês, pegar castanha e mel
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
