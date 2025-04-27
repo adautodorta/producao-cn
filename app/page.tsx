@@ -6,15 +6,60 @@ import Link from "next/link";
 import { Checkbox } from "./_components/ui/checkbox";
 import { useEffect, useState } from "react";
 import { Button } from "./_components/ui/button";
-import { MessageCircle, Trash2 } from "lucide-react";
+import { CalendarIcon, MessageCircle, MessageSquareQuote, Trash2 } from "lucide-react";
 import LogoCN from "./_assets/logo.png";
 import { Dialog, DialogDescription, DialogHeader, DialogContent, DialogFooter, DialogTitle } from "./_components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./_components/ui/select";
+import { Calendar } from "./_components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "./_components/ui/popover";
+import { format } from "date-fns";
+import { cn } from "./_lib/utils";
+import { ptBR } from "date-fns/locale";
 
 export default function Home() {
   const [checkedTasks, setCheckedTasks] = useState<{ [key: string]: boolean }>({});
   const [resetKey, setResetKey] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [sectionToClean, setSectionToClean] = useState<'p1-' | 'stage-' | null>(null);
+  const [date, setDate] = useState<Date | undefined>(new Date())
+
+  const [formData, setFormData] = useState({
+    oferta: '',
+    pregador: '',
+    tema: '',
+    referencia: '',
+    versao: '',
+    producao: '',
+    tipoCulto: '',
+    horario: ''
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+  
+  const handleShare = () => {
+    const tipoCultoTexto = formData.tipoCulto === 'familia' ? 'CULTO DA FAMÍLIA' : 'CULTO BEM MAIS QUE VENCEDORES';
+    const dateString = date?.toLocaleDateString('pt-BR') || '';
+    
+    const message = `*${tipoCultoTexto} - ${dateString} - ${formData.horario}*
+  
+  *Oferta:* ${formData.oferta}
+  *Pregador:* ${formData.pregador}
+  *Tema:* ${formData.tema}
+  *Referência:* ${formData.referencia}
+  *Versão:* ${formData.versao}
+  *Produção:* ${formData.producao}`;
+  
+    const cleanMessage = message.split('\n').map(line => line.trim()).join('\n');
+    
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(cleanMessage)}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
   const handleClearChecklist = (prefix: 'p1-' | 'stage-') => {
     setSectionToClean(prefix);
@@ -593,6 +638,175 @@ export default function Home() {
                       Devolver ou entregar em mãos a próxima equipe o Rádio/Phone desligado.
                     </label>
                   </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-4">
+            <AccordionTrigger>Formulário do culto</AccordionTrigger>
+            <AccordionContent>
+              <div className="mt-2 flex flex-col gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="tipoCulto" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Tipo de Culto
+                  </label>
+                  <Select
+                    value={formData.tipoCulto}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, tipoCulto: value }))}
+                  >
+                    <SelectTrigger className="w-full focus:outline-none focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder="Selecione o tipo de culto" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="familia">Culto da Família</SelectItem>
+                      <SelectItem value="vencedores">Culto Bem Mais que Vencedores</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="tipoCulto" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Data
+                  </label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !date && "text-muted-foreground"
+                        )}
+                      >
+                        {date ? (
+                          format(date, "PPP", { locale: ptBR })
+                        ) : (
+                          <span>Selecione uma data</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={date}
+                        onSelect={setDate}
+                        initialFocus
+                        locale={ptBR}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="tipoCulto" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Horário
+                  </label>
+                  <Select
+                    value={formData.horario}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, horario: value }))}
+                  >
+                    <SelectTrigger className="w-full focus:outline-none focus:ring-0 focus:ring-offset-0">
+                      <SelectValue placeholder="Selecione o horário do culto" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="08h">08h</SelectItem>
+                      <SelectItem value="10h">10h</SelectItem>
+                      <SelectItem value="15h">15h</SelectItem>
+                      <SelectItem value="17h">17h</SelectItem>
+                      <SelectItem value="19h">19h</SelectItem>
+                      <SelectItem value="19h30">19h30</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="oferta" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Oferta
+                  </label>
+                  <input
+                    type="text"
+                    id="oferta"
+                    value={formData.oferta}
+                    onChange={handleInputChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Nome de quem fará a oferta"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="pregador" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Pregador
+                  </label>
+                  <input
+                    type="text"
+                    id="pregador"
+                    value={formData.pregador}
+                    onChange={handleInputChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Nome do pregador"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="tema" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Tema da palavra
+                  </label>
+                  <input
+                    type="text"
+                    id="tema"
+                    value={formData.tema}
+                    onChange={handleInputChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Tema da pregação"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="referencia" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Referência
+                  </label>
+                  <input
+                    type="text"
+                    id="referencia"
+                    value={formData.referencia}
+                    onChange={handleInputChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Ex: João 3:16"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="versao" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Versão
+                  </label>
+                  <input
+                    type="versao"
+                    id="versao"
+                    value={formData.versao}
+                    onChange={handleInputChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Ex: NVI"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="producao" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Produção
+                  </label>
+                  <input
+                    type="text"
+                    id="producao"
+                    value={formData.producao}
+                    onChange={handleInputChange}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus:bg-accent disabled:cursor-not-allowed disabled:opacity-50"
+                    placeholder="Nome da produção"
+                  />
+                </div>
+
+                <Button 
+                  className="w-full mt-4 gap-2"
+                  onClick={handleShare}
+                >
+                  <MessageSquareQuote size={16} />
+                  Compartilhar no WhatsApp
+                </Button>
               </div>
             </AccordionContent>
           </AccordionItem>
