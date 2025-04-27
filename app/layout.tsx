@@ -60,7 +60,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
       >
-        <script dangerouslySetInnerHTML={{
+        {/* <script dangerouslySetInnerHTML={{
           __html: `
             document.addEventListener('gesturestart', function(e) {
               e.preventDefault();
@@ -69,7 +69,7 @@ export default function RootLayout({
               if (e.scale !== 1) { e.preventDefault(); }
             }, { passive: false });
           `
-        }} />
+        }} /> */}
         {children}
       </body>
     </html>
