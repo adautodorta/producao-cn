@@ -170,7 +170,7 @@ export default function Home() {
                     htmlFor="p1-task-1"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Quando culto das 08h, organizar mesa do café (montagem da mesa)
+                    Quando culto das 08h, organizar mesa do café (montagem da mesa).
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -184,7 +184,7 @@ export default function Home() {
                     htmlFor="p1-task-2"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Preparar jarra de água com copos
+                    Preparar jarra de água com copos + taça e água do pregador.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -198,7 +198,7 @@ export default function Home() {
                     htmlFor="p1-task-3"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Quando culto das 10h e 17h, perguntar para o líder da banda a quantidade de pessoas para ajuda de custo e depois passar para o líder da diaconia
+                    Perguntar para o líder da banda a quantidade de pessoas para ajuda de custo e depois passar para o lider da diaconia, antes da palavra de oferta.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -212,7 +212,7 @@ export default function Home() {
                     htmlFor="p1-task-4"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Quando 2º domingo do mês, pegar castanha e mel
+                    Quando 2º domingo do mês, pegar castanha e mel.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -226,7 +226,7 @@ export default function Home() {
                     htmlFor="p1-task-5"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Descobrir quem irá dar a palavra de oferta
+                    Descobrir quem irá dar a palavra de oferta.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -240,7 +240,7 @@ export default function Home() {
                     htmlFor="p1-task-6"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Pegar o versículo bíblico com quem irá fazer a palavra de oferta
+                    Pegar o máximo de informações sobre a palavra e pregador do culto. 
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -254,7 +254,7 @@ export default function Home() {
                     htmlFor="p1-task-7"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Preencher formulário de culto e enviar no grupo do whatsapp
+                    Preencher formulário de culto e enviar nos grupos do whatsapp (Produção Geral e Produção & Técnica).
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -268,7 +268,7 @@ export default function Home() {
                     htmlFor="p1-task-8"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Pegar a santa ceia para produção, pregador e banda (todo culto das 15hs tem santa ceia)
+                    Quando culto de santa-ceia, pegar a santa ceia para produção, pregador e banda (todo culto das 15hs tem santa ceia).
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -282,7 +282,7 @@ export default function Home() {
                     htmlFor="p1-task-9"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Já deixar a ceia do pregador um pouco aberta para facilitar a abertura
+                    Quando culto de santa-ceia, já deixar a ceia do pregador um pouco aberta para facilitar a abertura.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -296,7 +296,7 @@ export default function Home() {
                     htmlFor="p1-task-10"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Se houver apresentação de crianças, reservar as cadeiras e recepcionar os pais
+                    Se houver apresentação de crianças, reservar as cadeiras e recepcionar os pais.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -310,7 +310,21 @@ export default function Home() {
                     htmlFor="p1-task-11"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Quando culto das 08h, remover mesa do café da manhã
+                    Quando culto das 08h, remover mesa do café da manhã.
+                  </label>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <Checkbox
+                    id="p1-task-12"
+                    checked={checkedTasks['p1-task-12']}
+                    onCheckedChange={(checked) => handleCheckChange('p1-task-12', checked as boolean)}
+                    className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                  />
+                  <label
+                    htmlFor="p1-task-12"
+                    className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Retirar os copos e jarra da mesa de apoio e conferir se está tudo organizado.
                   </label>
                 </div>
               </div>
@@ -339,7 +353,7 @@ export default function Home() {
                     htmlFor="stage-task-1"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Alinhar com P1 sobre checagem de detalhes e informações do culto
+                    Alinhar com P1 sobre checagem de detalhes e informações do culto.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -353,7 +367,7 @@ export default function Home() {
                     htmlFor="stage-task-2"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Vistoriar backstage e palco
+                    Vistoriar backstage e palco.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -367,7 +381,7 @@ export default function Home() {
                     htmlFor="stage-task-3"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Ligar ar condicionado do backstage
+                    Ligar ar condicionado do backstage.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -381,7 +395,7 @@ export default function Home() {
                     htmlFor="stage-task-4"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Checar elementos técnicos (microfones, pilhas, etc...)
+                    Checar elementos técnicos (microfones, pilhas, etc...).
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -395,7 +409,7 @@ export default function Home() {
                     htmlFor="stage-task-5"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Pegar o fone/rádio
+                    Pegar o fone/rádio.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -409,7 +423,7 @@ export default function Home() {
                     htmlFor="stage-task-6"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Se apresentar a equipe do louvor e perguntar se precisa de alguma ajuda
+                    Se apresentar a equipe do louvor e perguntar se precisa de alguma ajuda.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -423,7 +437,7 @@ export default function Home() {
                     htmlFor="stage-task-7"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Se apresentar a House e se colocar à disposição para contribuir com eles. 
+                    Se apresentar a House e se colocar à disposição para contribuir com eles.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -437,8 +451,7 @@ export default function Home() {
                     htmlFor="stage-task-8"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Se apresentar a mídia, verificar e bater com a mídia elementos gráficos, vídeos,  versículos e 
-                    banners.
+                    Limpar as mesinhas e deixar no ponto de uso.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -452,7 +465,7 @@ export default function Home() {
                     htmlFor="stage-task-9"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Limpar as mesinhas e deixar no ponto de uso.
+                    Acompanhar o setlist e Posicionar o pastor/orador/ para este momento de oferta e comunicar a house quem vai entrar e com qual microfone quando estiver faltando 1 minutos para entrar.
                   </label>
                 </div>
                 <div className="flex items-start space-x-2">
@@ -466,7 +479,7 @@ export default function Home() {
                     htmlFor="stage-task-10"
                     className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    Posicionar o pastor/orador/ para este momento e comunicar a house quem vai entrar e com qual microfone quando estiver faltando 2 minutos para entrar.     
+                    Entrar com as mesas e água no 3º vídeo do CN news.
                   </label>
                 </div>
                   <div className="flex items-start space-x-2">
@@ -480,7 +493,7 @@ export default function Home() {
                       htmlFor="stage-task-11"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      Entrar com as mesas e água no 3 vídeo do CN news (conferir último vídeo)
+                      Conferir se instrumentos ou tripés estão na frente do telão e retirar caso estejam.
                     </label>
                   </div>
                   <div className="flex items-start space-x-2">
@@ -494,7 +507,7 @@ export default function Home() {
                       htmlFor="stage-task-12"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      Conferir instrumentos ou tripes estão na frente do telão e retirar
+                      Receber, preparar pastor e entregar microfone para próximo momento.
                     </label>
                   </div>
                   <div className="flex items-start space-x-2">
@@ -508,7 +521,7 @@ export default function Home() {
                       htmlFor="stage-task-13"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      Receber e preparar pastor/ para próximo momento e entregar
+                      Faltando 5 min para o final da palavra - Localizar o tecladista e fazê-lo subir ao backstage.
                     </label>
                   </div>
                   <div className="flex items-start space-x-2">
@@ -522,7 +535,7 @@ export default function Home() {
                       htmlFor="stage-task-14"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      Faltando 8 min para o final da palavra - Localizar o tecladista e fazê-lo subir ao backstage;
+                      Faltando 3 min para o final da palavra - deixar banda posicionada para entrada de todos (avisar a house para a entrada).
                     </label>
                   </div>
                   <div className="flex items-start space-x-2">
@@ -536,8 +549,7 @@ export default function Home() {
                       htmlFor="stage-task-15"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      Faltando 5 min para o final da palavra - Autorização para entrada do tecladista e início da  
-                      atmosfera;
+                      Garantir que todos os microfones estejam desligados e guardados.
                     </label>
                   </div>
                   <div className="flex items-start space-x-2">
@@ -551,7 +563,7 @@ export default function Home() {
                       htmlFor="stage-task-16"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      Faltando 3 min para o final da palavra - deixar banda posicionada para entrada de todos
+                      Retirar as mesas.
                     </label>
                   </div>
                   <div className="flex items-start space-x-2">
@@ -565,7 +577,7 @@ export default function Home() {
                       htmlFor="stage-task-17"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      Avisar P1 e a house para a entrada da banda.
+                      Conferir pilhas e baterias e informar a equipe do próximo culto.
                     </label>
                   </div>
                   <div className="flex items-start space-x-2">
@@ -579,7 +591,7 @@ export default function Home() {
                       htmlFor="stage-task-18"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      Garantir que todos os microfones estejam desligados e guardados;
+                      Garantir que a produção permaneça por pelo menos 10 minutos após o fim do culto, controlando e observando o fluxo de saída e a chegada da próxima equipe.
                     </label>
                   </div>
                   <div className="flex items-start space-x-2">
@@ -591,48 +603,6 @@ export default function Home() {
                     />
                     <label
                       htmlFor="stage-task-19"
-                      className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Retirar as mesas
-                    </label>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <Checkbox
-                      id="stage-task-20"
-                      checked={checkedTasks['stage-task-20']}
-                      onCheckedChange={(checked) => handleCheckChange('stage-task-20', checked as boolean)}
-                      className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
-                    />
-                    <label
-                      htmlFor="stage-task-20"
-                      className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Conferir pilhas e baterias e informar a equipe do próximo culto.
-                    </label>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <Checkbox
-                      id="stage-task-21"
-                      checked={checkedTasks['stage-task-21']}
-                      onCheckedChange={(checked) => handleCheckChange('stage-task-21', checked as boolean)}
-                      className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
-                    />
-                    <label
-                      htmlFor="stage-task-21"
-                      className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Garantir que a produção  permaneça por pelo menos 10 minutos após o  fim do culto, controlando e observando o fluxo de saída e a chegada da próxima equipe. 
-                    </label>
-                  </div>
-                  <div className="flex items-start space-x-2">
-                    <Checkbox
-                      id="stage-task-22"
-                      checked={checkedTasks['stage-task-22']}
-                      onCheckedChange={(checked) => handleCheckChange('stage-task-22', checked as boolean)}
-                      className="mt-[3px] data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
-                    />
-                    <label
-                      htmlFor="stage-task-22"
                       className="text-sm font-medium leading-[19px] peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
                       Devolver ou entregar em mãos a próxima equipe o Rádio/Phone desligado.
