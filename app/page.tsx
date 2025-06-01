@@ -10,11 +10,13 @@ import { CalendarIcon, MessageCircle, MessageSquareQuote, Trash2 } from "lucide-
 import LogoCN from "./_assets/logo.png";
 import { Dialog, DialogDescription, DialogHeader, DialogContent, DialogFooter, DialogTitle } from "./_components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./_components/ui/select";
+import { toast } from "sonner"
 import { Calendar } from "./_components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./_components/ui/popover";
 import { format } from "date-fns";
 import { cn } from "./_lib/utils";
 import { ptBR } from "date-fns/locale";
+import { Toaster } from "./_components/ui/sonner";
 
 export default function Home() {
   const [checkedTasks, setCheckedTasks] = useState<{ [key: string]: boolean }>({});
@@ -22,6 +24,7 @@ export default function Home() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [sectionToClean, setSectionToClean] = useState<'p1-' | 'stage-' | null>(null);
   const [date, setDate] = useState<Date | undefined>(new Date())
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     oferta: '',
@@ -31,7 +34,8 @@ export default function Home() {
     versao: '',
     producao: '',
     tipoCulto: '',
-    horario: ''
+    horario: '',
+    shareMessage: '',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -47,7 +51,7 @@ export default function Home() {
     const dateString = date?.toLocaleDateString('pt-BR') || '';
     
     const message = `*${tipoCultoTexto} - ${dateString} - ${formData.horario}*
-  
+    
   *Oferta:* ${formData.oferta}
   *Pregador:* ${formData.pregador}
   *Tema:* ${formData.tema}
@@ -57,8 +61,24 @@ export default function Home() {
   
     const cleanMessage = message.split('\n').map(line => line.trim()).join('\n');
     
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(cleanMessage)}`;
-    window.open(whatsappUrl, '_blank');
+    setFormData(prev => ({ ...prev, shareMessage: cleanMessage }));
+    setShareDialogOpen(true);
+  };
+
+  const handleCopyMessage = () => {
+    if (formData.shareMessage) {
+      navigator.clipboard.writeText(formData.shareMessage);
+      setShareDialogOpen(false);
+      toast.success("Mensagem copiada com sucesso!");
+    }
+  };
+  
+  const handleSendWhatsApp = () => {
+    if (formData.shareMessage) {
+      const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(formData.shareMessage)}`;
+      window.open(whatsappUrl, '_blank');
+    }
+    setShareDialogOpen(false);
   };
 
   const handleClearChecklist = (prefix: 'p1-' | 'stage-') => {
@@ -782,6 +802,34 @@ export default function Home() {
           </AccordionItem>
         </Accordion>
 
+        <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Compartilhar informações do culto</DialogTitle>
+              <DialogDescription>
+                Escolha como deseja compartilhar as informações do culto.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col gap-4">
+              <Button 
+                variant="outline" 
+                className="w-full gap-2"
+                onClick={handleCopyMessage}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-copy"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                Copiar mensagem
+              </Button>
+              <Button 
+                className="w-full gap-2"
+                onClick={handleSendWhatsApp}
+              >
+                <MessageSquareQuote size={16} />
+                Enviar pelo WhatsApp
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogContent>
             <DialogHeader>
@@ -816,6 +864,7 @@ export default function Home() {
           </Button>
         </div>
       </main>
+      <Toaster />
     </div>
   );
 }
